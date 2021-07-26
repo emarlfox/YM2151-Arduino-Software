@@ -97,12 +97,17 @@ void VoiceDataHandlerClass::loadVmemBlock(uint8_t channel, uint8_t* data) {
     data++;
 
     // Pitch Modulation depth
+    YM2151Driver.setPhaseDepth(data++);
 
     // Amplitude Modulation depth
+    YM2151Driver.setAmpDepth(data++);
     
     // Pitch Modulation sensitivity
+    YM2151Driver.setPMSense(data++);
     // Amplitude Modulation sensitivity
+    YM2151Driver.setAMSense(data++);
     // LFO Wave
+    YM2151Driver.setWaveForm(data++);
 
     // Transpose
 
