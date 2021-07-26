@@ -56,6 +56,8 @@ class YM2151DriverClass
 	 uint8_t MasterTune = 63;
 	 uint8_t MasterVolume[8];
 
+	 // DX21 params
+	 uint8_t LFOSync = 0;
 
  public:
 	void init();
@@ -90,6 +92,8 @@ class YM2151DriverClass
 	
 	void setMasterTune(uint8_t value);
 	void setMasterVolume(uint8_t channel, uint8_t value);
+
+	void setLFOSync(uint8_t value);
 
 	void loadInitPatch();
 };

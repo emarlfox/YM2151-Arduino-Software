@@ -232,6 +232,10 @@ void YM2151DriverClass::setPan(uint8_t channel, uint8_t value){
 
 
 void YM2151DriverClass::noteOn(uint8_t channel){
+	if (this->LFOSync) {
+		YM2151.write(0x01, 2);
+		YM2151.write(0x01, 0);
+	}
 	YM2151.write(0x08, (OpOn[channel]<<3) | (channel & 0x7));
 }
 
@@ -261,6 +265,10 @@ void YM2151DriverClass::setMasterVolume(uint8_t channel, uint8_t value) {
 		setOpVolume(channel, i, YM2151DriverClass::TotalLevel[adr]);
 	}
 	
+}
+
+void YM2151DriverClass::setLFOSync(uint8_t value) {
+	this->setLFOSync(value);
 }
 
 extern  PROGMEM const unsigned char initPatch[];
