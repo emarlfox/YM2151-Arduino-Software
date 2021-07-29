@@ -53,7 +53,7 @@ class YM2151DriverClass
 	 uint8_t PhAmpMod;
 	 uint8_t CtrlOut_WF;
 
-	 uint8_t MasterTune = 63;
+	 uint8_t Transpose = 24;
 	 uint8_t MasterVolume[8];
 
 	 // DX21 params
@@ -90,7 +90,7 @@ class YM2151DriverClass
 	void noteOff(uint8_t channel);
 	void setTone(uint8_t ch, uint8_t keycode, int16_t kf);
 	
-	void setMasterTune(uint8_t value);
+	void setTranspose(uint8_t value);
 	void setMasterVolume(uint8_t channel, uint8_t value);
 
 	void setLFOSync(uint8_t value);

@@ -18,19 +18,28 @@
 */
 
 #include "SysExHandler.h"
+#include "VoiceDataHandler.h"
 #include "YM2151Driver.h"
-
 
 void SysExHandlerClass::init()
 {
 }
 
-void SysExHandlerClass::handleSysEx(uint8_t value[], uint8_t length) {
-	if (length > 5 || value[1] != 0x4d || value[2] != 0x54) {
+void SysExHandlerClass::handleSysEx(uint8_t* data, uint8_t length) {
+	if (data[1] != 0x43) {
 		return;
 	}
 
-	YM2151Driver.setMasterTune(value[3]);
+	if (data[1] == 0x43
+		&& data[2] == 0x00
+		&& data[3] == 0x04
+		&& data[4] == 0x20
+		&& data[5] == 0x00
+	) {
+		for (int i = 0; i < 8; i++) {
+			VoiceDataHandler.loadVmemBlock(i, &data[6]);
+		}
+	}
 }
-SysExHandlerClass SysExHandler;
 
+SysExHandlerClass SysExHandler;

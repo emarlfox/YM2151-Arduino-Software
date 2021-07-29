@@ -1,4 +1,3 @@
-
 	/**
 	*	YM2151 - Chip Controller Software for ARDUINO
 	*	(C) 2016  Marcel Weiß
@@ -38,15 +37,11 @@
 
 	MIDI_CREATE_INSTANCE(HardwareSerial, Serial,     MIDI); //Set Midi In to RX1 on Arduino
 //MIDI_CREATE_DEFAULT_INSTANCE();
-	
 
 	void setup() {
-
-		
 		YM2151.begin();
 		YM2151.initLFO();
 		MIDI.begin(MIDI_CHANNEL_OMNI); 
-		
 
 		//init
 		EPROMManager.init();

@@ -37,7 +37,7 @@ class VoiceDataHandlerClass
 	void init();
     void handleVmem(uint8_t* data);
     void handleVced(uint8_t* data);
-    void loadVmemBlock(uint8_t* data, uint8_t channel);
+    void loadVmemBlock(uint8_t channel, uint8_t* data);
 private:
     /*
     Operator[4] operators; // Ordering is 4 2 3 1
