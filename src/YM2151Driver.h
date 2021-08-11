@@ -72,7 +72,7 @@ class YM2151DriverClass
 	void setDec2R(uint8_t channel, uint8_t op, uint8_t value);
 	void setRel(uint8_t channel, uint8_t op, uint8_t value);
 	void setAMSenseEn(uint8_t channel, uint8_t op, uint8_t value);
-	void setOpActive(uint8_t channel, uint8_t op, uint8_t value);
+	void setOpActive(uint8_t channel, uint8_t op, bool enable);
 	void setAlgorithm(uint8_t channel, uint8_t value);
 	void setFeedback(uint8_t channel, uint8_t value);
 	void setPMSense(uint8_t channel, uint8_t value);
@@ -96,6 +96,7 @@ class YM2151DriverClass
 	void setLFOSync(uint8_t value);
 
 	void loadInitPatch();
+	void loadTestPatch();
 };
 
 extern YM2151DriverClass YM2151Driver;

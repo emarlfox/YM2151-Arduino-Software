@@ -1,3 +1,4 @@
+
 	/**
 	*	YM2151 - Chip Controller Software for ARDUINO
 	*	(C) 2016  Marcel Weiß
@@ -39,9 +40,13 @@
 //MIDI_CREATE_DEFAULT_INSTANCE();
 
 	void setup() {
+		Serial.begin(9600);
+		while(!Serial){}
+		Serial.println(__cplusplus);
+
 		YM2151.begin();
 		YM2151.initLFO();
-		MIDI.begin(MIDI_CHANNEL_OMNI); 
+		// MIDI.begin(MIDI_CHANNEL_OMNI); 
 
 		//init
 		EPROMManager.init();
@@ -52,15 +57,19 @@
 		SysExHandler.init();
 
 		//set Handlers
-		MIDI.setHandleSystemExclusive(handle_sysex);
-		MIDI.setHandleNoteOn(handle_NoteOn);
-		MIDI.setHandleNoteOff(handle_NoteOff);
-		MIDI.setHandleProgramChange(handle_PC);
-		MIDI.setHandleControlChange(handle_CC);
+		// MIDI.setHandleSystemExclusive(handle_sysex);
+		// MIDI.setHandleNoteOn(handle_NoteOn);
+		// MIDI.setHandleNoteOff(handle_NoteOff);
+		// MIDI.setHandleProgramChange(handle_PC);
+		// MIDI.setHandleControlChange(handle_CC);
 	} 
 
 	void loop() {
-		MIDI.read();
+		// MIDI.read();
+		NotePool.handleNote(true, 0, 69, 127);
+		_delay_ms(5000);
+		NotePool.handleNote(false, 0, 69, 127);
+		_delay_ms(1000);
 	}
 
 	//SysEx:

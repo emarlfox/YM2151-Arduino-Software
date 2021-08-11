@@ -16,52 +16,91 @@
 *	along with this program.If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "VoiceDataHandler.h"
+#include "VoiceData.h"
 #include "YM2151Driver.h"
 
-void VoiceDataHandlerClass::init()
+void VoiceDataClass::init()
 {
 }
 
 /**
  * Handler for VMEM (Voice Bulk Data)
  */
-void VoiceDataHandlerClass::handleVmem(uint8_t* data) {
+void VoiceDataClass::handleVmem(uint8_t* data) {
     
 }
 
 /**
  * Handler for VCED (Voice Parameters) data
  */
-void VoiceDataHandlerClass::handleVced(uint8_t* data) {
+void VoiceDataClass::handleVced(uint8_t* data) {
 
 }
 
 /**
  * Loads VMEM data into a specified channel.
  */
-void VoiceDataHandlerClass::loadVmemBlock(uint8_t channel, uint8_t* data) {
+void VoiceDataClass::loadVmemBlock(uint8_t channel, uint8_t* data) {
     // Operators 4 - 2 - 3 - 1
-    for (uint8_t i = 0; i < 4; i++) {
-        uint8_t op = (i == 0) ? 3
-                    : (i == 3) ? 0
-                    : i;
+    for (uint8_t i = 4; i != 0; i--) {
+        uint8_t op = i - 1;
+
+        Serial.print("OP");
+        Serial.print(((op == 2) ? 1 : (op == 1) ? 2 : op) + 1);
+        Serial.println();
+
+        YM2151Driver.setOpActive(channel, op, true);
 
         // Attack rate
+        Serial.print("ATR ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
+
         YM2151Driver.setATR(channel, op, *(data++) & 0x1F);
 
         // Decay 1 rate
+        Serial.print("D1R ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
+
         YM2151Driver.setDec1R(channel, op, *(data++) & 0x1F);
+
         // Decay 2 rate
+        Serial.print("D2R ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
+
         YM2151Driver.setDec2R(channel, op, *(data++) & 0x1F);
+
         // Release rate
+        Serial.print("RR ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
         YM2151Driver.setRel(channel, op, *(data++) & 0x0F);
+
         // Decay 1 level
+        Serial.print("D1L ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
+
         YM2151Driver.setDec1L(channel, op, *(data++) & 0x0F);
+
         // Keyboard Scaling level
         data++;
 
         // Amplitude Modulation Enable
+        Serial.print("AMS-EN/EGB/KV Sens ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.print("\t");
+        Serial.print(*data, BIN);
+        Serial.println();
+
         YM2151Driver.setAMSenseEn(channel, op, (*(data) >> 6) & 0x01);
         // EG Bias Sensitivity
         // Key Velocity Sensitivity
@@ -69,22 +108,54 @@ void VoiceDataHandlerClass::loadVmemBlock(uint8_t channel, uint8_t* data) {
         data++;
 
         // Output Level
+        Serial.print("TL ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
+
         YM2151Driver.setOpVolume(channel, op,
-            map(*(data++), 0, 99, 0, 127) & 0x7F
+            map(*(data++), 0, 99, 127, 0) & 0x7F
         );
 
         // Oscillator Frequency
+        Serial.print("OSC-F ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
+        Serial.print("MUL ");
+        Serial.print("\t");
+        Serial.print(frequency_ratio_to_mul_dt2[*(data) & 0x3F][0], HEX);
+        Serial.println();
+        Serial.print("DT2 ");
+        Serial.print("\t");
+        Serial.print(frequency_ratio_to_mul_dt2[*(data) & 0x3F][1], HEX);
+        Serial.println();
+
         YM2151Driver.setMul(channel, op, frequency_ratio_to_mul_dt2[*(data) & 0x3F][0]);
         YM2151Driver.setDet2(channel, op, frequency_ratio_to_mul_dt2[*(data) & 0x3F][1]);
         data++;
 
         // Keyboard Scaling rate
+        Serial.print("KSR ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
         YM2151Driver.setKSR(channel, op, (*(data) >> 3) & 0x03);
         // Detune 1
+        Serial.print("DT1 ");
+        Serial.print("\t");
+        Serial.print(*data, HEX);
+        Serial.println();
         YM2151Driver.setDet1(channel, op, *(data) & 0x07);
         data++;
     }
 
+    Serial.print("LFO Sync/Feedback/Algorithm ");
+    Serial.print("\t");
+    Serial.print(*data, HEX);
+    Serial.print("\t");
+    Serial.print(*data, BIN);
+    Serial.println();
     // LFO Sync
     YM2151Driver.setLFOSync((*(data) >> 6) & 0x01);
     // Feedback level
@@ -93,17 +164,37 @@ void VoiceDataHandlerClass::loadVmemBlock(uint8_t channel, uint8_t* data) {
     YM2151Driver.setAlgorithm(channel, *(data) & 0x07);
     data++;
 
+    Serial.print("LFO Speed/Delay ");
+    Serial.print("\t");
+    Serial.print(*data, HEX);
+    Serial.print("\t");
+    Serial.print(*data, BIN);
+    Serial.println();
     // LFO Speed
     YM2151Driver.setLFOFreq(*(data));
     // LFO Delay
     data++;
 
+    Serial.print("PMD ");
+    Serial.print("\t");
+    Serial.print(*data, HEX);
+    Serial.println();
     // Pitch Modulation depth
     YM2151Driver.setPhaseDepth(*(data++));
 
+    Serial.print("AMD ");
+    Serial.print("\t");
+    Serial.print(*data, HEX);
+    Serial.println();
     // Amplitude Modulation depth
     YM2151Driver.setAmpDepth(*(data++));
     
+    Serial.print("PMS/AMS/LFO Wave");
+    Serial.print("\t");
+    Serial.print(*data, HEX);
+    Serial.print("\t");
+    Serial.print(*data, BIN);
+    Serial.println();
     // Pitch Modulation sensitivity
     YM2151Driver.setPMSense(channel, (*(data) >> 4) & 0x07);
     // Amplitude Modulation sensitivity
@@ -112,6 +203,10 @@ void VoiceDataHandlerClass::loadVmemBlock(uint8_t channel, uint8_t* data) {
     YM2151Driver.setWaveForm(*(data) & 0x02);
     data++;
 
+    Serial.print("Transpose");
+    Serial.print("\t");
+    Serial.print(*data, HEX);
+    Serial.println();
     // Transpose
     YM2151Driver.setTranspose(*(data++));
 
@@ -171,30 +266,4 @@ void VoiceDataHandlerClass::loadVmemBlock(uint8_t channel, uint8_t* data) {
     data++;
 }
 
-PROGMEM const unsigned char deepGrandVmem[] = {
-    0xF0, 0x43, 0x00, 0x04, 0x20, 0x00, 
-    0x18, 0x01, 0x01, 0x03, 0x00, 0x15, 
-    0x00, 0x41, 0x04, 0x0D, 0x16, 0x01, 
-    0x01, 0x04, 0x0C, 0x4B, 0x00, 0x52, 
-    0x00, 0x13, 0x18, 0x05, 0x01, 0x03, 
-    0x00, 0x57, 0x00, 0x32, 0x16, 0x08, 
-    0x14, 0x08, 0x01, 0x05, 0x0C, 0x01, 
-    0x00, 0x63, 0x04, 0x13, 0x32, 0x23, 
-    0x00, 0x00, 0x00, 0x02, 0x18, 0x00, 
-    0x04, 0x00, 0x63, 0x32, 0x00, 0x00, 
-    0x00, 0x32, 0x00, 0x44, 0x65, 0x65, 
-    0x70, 0x20, 0x47, 0x72, 0x61, 0x6E, 
-    0x64, 0x63, 0x63, 0x63, 0x32, 0x32, 
-    0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-    0x00, 0x00, 0xF7
-};
-
-VoiceDataHandlerClass VoiceDataHandler;
+VoiceDataClass VoiceData;

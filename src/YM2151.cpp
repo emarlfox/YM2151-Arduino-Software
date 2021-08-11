@@ -78,6 +78,11 @@ static	uint8_t last_write_addr=0x00;
  */
 void	YM2151_Class::write(uint8_t addr,uint8_t data)
 {
+	Serial.print(addr, HEX);
+	Serial.print("\t");
+	Serial.print(data, BIN);
+	Serial.print("\r\n");
+ 
 	uint8_t i,wi;
 	volatile	uint8_t	*ddrD=&DDRD;
 	volatile	uint8_t	*ddrB=&DDRB;
@@ -174,9 +179,8 @@ void	YM2151_Class::wait(uint8_t loop)
  */
 void	YM2151_Class::initLFO()
 {
-	write(0x1,0x1);
+	write(0x01,0x02);
 }
-
 
 
 PROGMEM const unsigned char KeyCodeTable[] = {

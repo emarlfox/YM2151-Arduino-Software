@@ -18,7 +18,7 @@
 */
 
 #include "SysExHandler.h"
-#include "VoiceDataHandler.h"
+#include "VoiceData.h"
 #include "YM2151Driver.h"
 
 void SysExHandlerClass::init()
@@ -36,10 +36,15 @@ void SysExHandlerClass::handleSysEx(uint8_t* data, uint8_t length) {
 		&& data[4] == 0x20
 		&& data[5] == 0x00
 	) {
-		for (int i = 0; i < 8; i++) {
-			VoiceDataHandler.loadVmemBlock(i, &data[6]);
-		}
+		// for (int i = 0; i < 8; i++) {
+			uint8_t* vmemData = &(data[6]);
+			VoiceData.loadVmemBlock(0, vmemData);
+		// }
 	}
+}
+
+void SysExHandlerClass::testVmem() {
+	this->handleSysEx(deepGrandVmem, sizeof(deepGrandVmem));
 }
 
 SysExHandlerClass SysExHandler;

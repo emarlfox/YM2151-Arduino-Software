@@ -31,7 +31,7 @@
     uint8_t fixedFrequencyRange;
 */
 
-class VoiceDataHandlerClass
+class VoiceDataClass
 {
  public:
 	void init();
@@ -79,7 +79,7 @@ private:
     */
 };
 
-// MUL + DT2 register values based on DX21 operator frequency ratio slots
+// MUL + DT2 register values based on VMEM operator frequency ratio slots
 static uint8_t const frequency_ratio_to_mul_dt2[64][2] =
 {
     {0, 0}, {0, 1}, {0, 2}, {0, 3}, {1, 0}, {1, 1}, 
@@ -95,6 +95,6 @@ static uint8_t const frequency_ratio_to_mul_dt2[64][2] =
     {13, 3}, {15, 2}, {14, 3}, {15, 3}
 };
 
-extern VoiceDataHandlerClass VoiceDataHandler;
+extern VoiceDataClass VoiceData;
 
 #endif
